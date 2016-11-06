@@ -8,7 +8,9 @@ module.exports = {
     },
 	plugins: [
 		new WebpackLighthousePlugin({
-            url: 'https://airhorner.com'
+            url: 'https://airhorner.com',
+            saveAssets: true,
+            perf: true
         })
 	],
 };
