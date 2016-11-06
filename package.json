@@ -5,7 +5,8 @@
   "main": "src/webpack-lighthouse-plugin.js",
   "scripts": {
     "demo": "cd test && webpack .",
-    "lint": "eslint src/webpack-shell-plugin.js"
+    "lint": "eslint src/webpack-shell-plugin.js",
+    "clean": "rm -rf test/*.json test/*.html"
   },
   "repository": {
     "type": "git",
