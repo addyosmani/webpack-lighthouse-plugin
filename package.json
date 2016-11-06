@@ -2,7 +2,7 @@
   "name": "webpack-lighthouse-plugin",
   "version": "1.0.0",
   "description": "A Lighthouse plugin for Webpack",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "rollup -c",
     "demo": "npm run build && cd test && webpack .",
