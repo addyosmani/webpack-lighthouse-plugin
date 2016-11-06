@@ -52,6 +52,17 @@ module.exports = {
 * `url` - the URL to run Lighthouse audits against
 * `perf` - only run Lighthouse performance audits (instead of the full Progressive Web App audits)
 
+Example: Just get the time to first meaningful paint, time-to-interactive and perceptual speed-index:
+
+```js
+	plugins: [
+		new WebpackLighthousePlugin({
+            url: 'https://airhorner.com',
+            perf: true
+        })
+	],
+```
+
 ### Developing
 
 If opening a pull request, create an issue describing a fix or feature. Have your pull request point to 
