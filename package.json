@@ -21,7 +21,8 @@
   "homepage": "https://github.com/addyosmani/webpack-lighthouse-plugin#readme",
   "devDependencies": {
     "webpack": "^1.13.3",
-    "eslint": "^2.7.0"
+    "eslint": "^2.7.0",
+    "eslint-config-google": "^0.4.0"
   },
   "dependencies": {
     "lighthouse": "^1.1.7"
