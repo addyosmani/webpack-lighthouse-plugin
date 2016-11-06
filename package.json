@@ -6,7 +6,7 @@
   "scripts": {
     "demo": "cd test && webpack .",
     "lint": "eslint src/webpack-shell-plugin.js",
-    "clean": "rm -rf test/*.json test/*.html"
+    "clean": "rm -rf test/*.json test/*.html test/*.log"
   },
   "repository": {
     "type": "git",

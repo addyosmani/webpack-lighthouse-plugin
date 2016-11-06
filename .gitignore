@@ -1,4 +1,5 @@
 test/*.html
 test/*.json
+test/*.log
 node_modules
 npm-debug.log
