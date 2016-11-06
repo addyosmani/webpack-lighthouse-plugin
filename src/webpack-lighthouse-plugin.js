@@ -6,13 +6,14 @@ const lighthouse = require('lighthouse/lighthouse-cli/bin.js').launchChromeAndRu
 // configuration override support.
 const defaultOptions = {
     url: "",
+    perf: false,
+    // Not yet available
     disableDeviceEmulation: false,
     disableCPUThrottling: true,
     disableNetworkThrottling: false,
     saveAssets: false,
     saveArtifacts: false,
     configPath: '',
-    perf: false,
     logLevel: 'info',
     skipAutolaunch: false,
     selectChrome: false
@@ -37,10 +38,10 @@ function validateInput(options) {
   if (typeof options.perf === 'string') {
     options.perf = String(options.perf);
   }
-  if (!!options.configPath.length) {
-    options.configPath = 'lighthouse/lighthouse-core/config/config.js';
+  if (options.configPath === '') {
+    options.configPath = 'lighthouse/lighthouse-core/config/default.json';
   }
-  if (!!options.perf === true) {
+  if (options.perf === true) {
     options.configPath = 'lighthouse/lighthouse-core/config/perf.json';
   }
   return options;
@@ -55,7 +56,7 @@ function mergeOptions(options, defaults) {
   return defaults;
 }
 
-export default class WebpackLighthousePlugin {
+class WebpackLighthousePlugin {
   constructor(options) {
     this.options = validateInput(mergeOptions(options, defaultOptions));
   }
@@ -63,9 +64,10 @@ export default class WebpackLighthousePlugin {
   apply(compiler) {
     compiler.plugin('after-emit', () => {
       if (this.options.url.length) {
-        console.log(this.options);
         lighthouse([this.options.url], require(this.options.configPath), defaultOptions);
       }
     });
   }
 }
+
+module.exports = WebpackLighthousePlugin;

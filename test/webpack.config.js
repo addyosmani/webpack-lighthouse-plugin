@@ -1,6 +1,5 @@
 const webpack = require("webpack");
-const path = require("path");
-const WebpackLighthousePlugin = require('../lib/');
+const WebpackLighthousePlugin = require('../src/webpack-lighthouse-plugin');
 
 module.exports = {
     entry: 'sample.js',
