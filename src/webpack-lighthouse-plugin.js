@@ -1,22 +1,17 @@
 const exec = require('child_process').exec;
-const lighthouse = require('lighthouse/lighthouse-cli/bin.js').launchChromeAndRun;
+// TODO: Switch when https://github.com/GoogleChrome/lighthouse/pull/916 lands
+// const lighthouse = require('lighthouse/lighthouse-cli/bin.js').launchChromeAndRun;
+const lighthouse = require('./lighthouse-bin.js').launchChromeAndRun;
+let configPath = 'lighthouse/lighthouse-core/config/default.json';
 
-// TODO: Expose flag override support upstream in lighthouse
-// Atm, one would need to replicate lighthouse-cli/bin.js to achieve full
-// configuration override support.
 const defaultOptions = {
     url: "",
     perf: false,
-    // Not yet available
     disableDeviceEmulation: false,
     disableCPUThrottling: true,
     disableNetworkThrottling: false,
     saveAssets: false,
-    saveArtifacts: false,
-    configPath: '',
-    logLevel: 'info',
-    skipAutolaunch: false,
-    selectChrome: false
+    saveArtifacts: false
 };
 
 function validateInput(options) {
@@ -38,11 +33,8 @@ function validateInput(options) {
   if (typeof options.perf === 'string') {
     options.perf = String(options.perf);
   }
-  if (options.configPath === '') {
-    options.configPath = 'lighthouse/lighthouse-core/config/default.json';
-  }
   if (options.perf === true) {
-    options.configPath = 'lighthouse/lighthouse-core/config/perf.json';
+    configPath = 'lighthouse/lighthouse-core/config/perf.json';
   }
   return options;
 }
@@ -64,7 +56,10 @@ class WebpackLighthousePlugin {
   apply(compiler) {
     compiler.plugin('after-emit', () => {
       if (this.options.url.length) {
-        lighthouse([this.options.url], require(this.options.configPath), defaultOptions);
+        const flags = {
+          lighthouseFlags: this.options
+        };
+        lighthouse([this.options.url], require(configPath), flags);
       }
     });
   }
