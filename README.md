@@ -96,6 +96,29 @@ Just get the time to first meaningful paint, time-to-interactive and perceptual 
 
 If you require even more data, you can also pass `saveArtifacts: true`.
 
+### Webpack Dev Server
+
+*Note: Webpack Dev Server targets development builds rather than production. Although
+you can run Lighthouse against a dev build, it's best run against builds closer to prod.*
+
+If you're trying to use [webpack-dev-server](https://webpack.github.io/docs/webpack-dev-server.html) with
+this plugin, first run it against your local build using the `webpack-dev-server` CLI:
+
+```js
+$ webpack-dev-server build/
+  http://localhost:8080/webpack-dev-server/
+ ```
+
+Then make sure to reference the `webpack-dev-server` URL in your `WebpackLighthousePlugin` config:
+
+ ```js
+   plugins: [
+    new WebpackLighthousePlugin({
+      url: 'http://localhost:8080/webpack-dev-server/'
+    })
+  ]
+ ```
+
 ### Developing
 
 If opening a pull request, create an issue describing a fix or feature. Have your pull request point to 
