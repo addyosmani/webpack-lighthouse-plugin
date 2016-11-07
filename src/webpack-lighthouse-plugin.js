@@ -22,7 +22,7 @@ const exec = require('child_process').exec;
 let configPath = 'lighthouse/lighthouse-core/config/default.json';
 
 const defaultOptions = {
-    url: "",
+    url: '',
     perf: false,
     disableDeviceEmulation: false,
     disableCPUThrottling: true,

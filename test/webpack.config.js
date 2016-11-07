@@ -23,11 +23,11 @@ module.exports = {
     output: {
         filename: 'test.js'
     },
-	plugins: [
-		new WebpackLighthousePlugin({
+    plugins: [
+        new WebpackLighthousePlugin({
             url: 'https://airhorner.com',
             saveAssets: true,
             perf: true
         })
-	],
+    ],
 };
