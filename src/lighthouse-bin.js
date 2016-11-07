@@ -33,78 +33,81 @@ const log = require('lighthouse/lighthouse-core/lib/log');
 const chrome_launcher_1 = require('lighthouse/lighthouse-cli/chrome-launcher');
 const Commands = require('lighthouse/lighthouse-cli//commands/commands');
 const perfOnlyConfig = require('lighthouse/lighthouse-core/config/perf.json');
-const cli = yargs
-    .help('help')
-    .version(() => require('lighthouse/package').version)
-    .showHelpOnFail(false, 'Specify --help for available options')
-    .usage('$0 url')
-    .group([
-    'verbose',
-    'quiet'
-], 'Logging:')
-    .describe({
-    verbose: 'Displays verbose logging',
-    quiet: 'Displays no progress, debug logs or errors'
-})
-    .group([
-    'mobile',
-    'save-assets',
-    'save-artifacts',
-    'list-all-audits',
-    'list-trace-categories',
-    'config-path',
-    'perf'
-], 'Configuration:')
-    .describe({
-    'disable-device-emulation': 'Disable Nexus 5X emulation',
-    'disable-cpu-throttling': 'Disable CPU throttling',
-    'disable-network-throttling': 'Disable network throttling',
-    'save-assets': 'Save the trace contents & screenshots to disk',
-    'save-artifacts': 'Save all gathered artifacts to disk',
-    'list-all-audits': 'Prints a list of all available audits and exits',
-    'list-trace-categories': 'Prints a list of all required trace categories and exits',
-    'config-path': 'The path to the config JSON.',
-    'perf': 'Use a performance-test-only configuration',
-    'skip-autolaunch': 'Skip autolaunch of Chrome when accessing port 9222 fails',
-    'select-chrome': 'Interactively choose version of Chrome to use when multiple installations are found',
-})
-    .group([
-    'output',
-    'output-path'
-], 'Output:')
-    .describe({
-    'output': 'Reporter for the results',
-    'output-path': `The file path to output the results
-Example: --output-path=./lighthouse-results.html`
-})
-    .boolean([
-    'disable-device-emulation',
-    'disable-cpu-throttling',
-    'disable-network-throttling',
-    'save-assets',
-    'save-artifacts',
-    'list-all-audits',
-    'list-trace-categories',
-    'perf',
-    'skip-autolaunch',
-    'select-chrome',
-    'verbose',
-    'quiet',
-    'help'
-])
-    .choices('output', Printer.GetValidOutputOptions())
-    .default('disable-cpu-throttling', true)
-    .default('output', Printer.GetValidOutputOptions()[Printer.OutputMode.pretty])
-    .default('output-path', 'stdout')
-    .check((argv) => {
-    // Make sure lighthouse has been passed a url, or at least one of --list-all-audits
-    // or --list-trace-categories. If not, stop the program and ask for a url
-    if (!argv.listAllAudits && !argv.listTraceCategories && argv._.length === 0) {
-        throw new Error('Please provide a url');
-    }
-    return true;
-})
-    .argv;
+// const cli = yargs
+//     .help('help')
+//     .version(() => require('lighthouse/package').version)
+//     .showHelpOnFail(false, 'Specify --help for available options')
+//     .usage('$0 url')
+//     .group([
+//     'verbose',
+//     'quiet'
+// ], 'Logging:')
+//     .describe({
+//     verbose: 'Displays verbose logging',
+//     quiet: 'Displays no progress, debug logs or errors'
+// })
+//     .group([
+//     'mobile',
+//     'save-assets',
+//     'save-artifacts',
+//     'list-all-audits',
+//     'list-trace-categories',
+//     'config-path',
+//     'perf'
+// ], 'Configuration:')
+//     .describe({
+//     'disable-device-emulation': 'Disable Nexus 5X emulation',
+//     'disable-cpu-throttling': 'Disable CPU throttling',
+//     'disable-network-throttling': 'Disable network throttling',
+//     'save-assets': 'Save the trace contents & screenshots to disk',
+//     'save-artifacts': 'Save all gathered artifacts to disk',
+//     'list-all-audits': 'Prints a list of all available audits and exits',
+//     'list-trace-categories': 'Prints a list of all required trace categories and exits',
+//     'config-path': 'The path to the config JSON.',
+//     'perf': 'Use a performance-test-only configuration',
+//     'skip-autolaunch': 'Skip autolaunch of Chrome when accessing port 9222 fails',
+//     'select-chrome': 'Interactively choose version of Chrome to use when multiple installations are found',
+// })
+//     .group([
+//     'output',
+//     'output-path'
+// ], 'Output:')
+//     .describe({
+//     'output': 'Reporter for the results',
+//     'output-path': `The file path to output the results
+// Example: --output-path=./lighthouse-results.html`
+// })
+//     .boolean([
+//     'disable-device-emulation',
+//     'disable-cpu-throttling',
+//     'disable-network-throttling',
+//     'save-assets',
+//     'save-artifacts',
+//     'list-all-audits',
+//     'list-trace-categories',
+//     'perf',
+//     'skip-autolaunch',
+//     'select-chrome',
+//     'verbose',
+//     'quiet',
+//     'help'
+// ])
+//     .choices('output', Printer.GetValidOutputOptions())
+//     .default('disable-cpu-throttling', true)
+//     .default('output', Printer.GetValidOutputOptions()[Printer.OutputMode.pretty])
+//     .default('output-path', 'stdout')
+//     .check((argv) => {
+//     // Make sure lighthouse has been passed a url, or at least one of --list-all-audits
+//     // or --list-trace-categories. If not, stop the program and ask for a url
+//     if (!argv.listAllAudits && !argv.listTraceCategories && argv._.length === 0) {
+//         throw new Error('Please provide a url');
+//     }
+//     return true;
+// })
+//     .argv;
+
+const cli = {};
+
 // Process terminating command
 if (cli.listAllAudits) {
     Commands.ListAudits();
