@@ -2,7 +2,7 @@
 [![npm](https://img.shields.io/npm/dm/webpack-lighthouse-plugin.svg)]()
 # Webpack Lighthouse Plugin
 
-This plugin allows you to run Lighthouse at the end of a Webpack build.
+This plugin allows you to run [Lighthouse](https://github.com/googlechrome/lighthouse) from a Webpack build.
 
 ## Installation
 
