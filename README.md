@@ -13,7 +13,7 @@ This plugin allows you to run [Lighthouse](https://github.com/googlechrome/light
 In `webpack.config.js`:
 
 ```js
-const WebpackShellPlugin = require('webpack-lighthouse-plugin');
+const WebpackLighthousePlugin = require('webpack-lighthouse-plugin');
 
 module.exports = {
   ...
