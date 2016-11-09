@@ -96,6 +96,33 @@ Just get the time to first meaningful paint, time-to-interactive and perceptual 
 
 If you require even more data, you can also pass `saveArtifacts: true`.
 
+### Running `webpack-lighthouse-plugin` with real mobile devices
+
+Similar to the Lighthouse module, this plugin can also be used with real phones. It works over [remote debugging](https://github.com/GoogleChrome/lighthouse#lighthouse-w-mobile-devices)
+using the [Android command line tools](http://developer.android.com/sdk/index.html#download).
+
+Before running the plugin as part of your Webpack build, run the following commands:
+
+```
+$ adb kill-server
+$ adb devices -l
+$ adb forward tcp:9222 localabstract:chrome_devtools_remote
+``` 
+
+You can then run `webpack` against your build and instead of firing up a Chrome instance on desktop, it'll do this with
+your mobile device Chrome instead. You will want to disable a few flags to improve the accuracy of your metrics:
+
+```js
+	plugins: [
+		new WebpackLighthousePlugin({
+            url: 'https://localhost:9000', // Port you are locally serving on
+            disableDeviceEmulation: true,
+            disableCPUThrottling: true,
+            disableNetworkThrottling: true // Only if you're going to use real 3G
+        })
+	],
+```
+
 ### Webpack Dev Server
 
 *Note: Webpack Dev Server targets development builds rather than production. Although
