@@ -12,8 +12,18 @@
     "type": "git",
     "url": "git+https://github.com/addyosmani/webpack-lighthouse-plugin.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "progressive web apps",
+    "lighthouse",
+    "performance",
+    "auditing",
+    "time to interactive",
+    "tti",
+    "first meaningful paint",
+    "performance metrics",
+    "performance audits"
+  ],
+  "author": "Addy Osmani",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/addyosmani/webpack-lighthouse-plugin/issues"
