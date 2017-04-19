@@ -18,12 +18,6 @@
 const _SIGINT = 'SIGINT';
 const _ERROR_EXIT_CODE = 130;
 const _RUNTIME_ERROR_CODE = 1;
-;
-const environment = require('lighthouse/lighthouse-core/lib/environment.js');
-if (!environment.checkNodeCompatibility()) {
-    console.warn('Compatibility error', 'Lighthouse requires node 5+ or 4 with --harmony');
-    process.exit(_RUNTIME_ERROR_CODE);
-}
 const path = require('path');
 const yargs = require('yargs');
 const Printer = require('lighthouse/lighthouse-cli/printer');

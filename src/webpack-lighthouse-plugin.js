@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+const path = require('path')
+const express = require('express');
 // TODO: Switch when https://github.com/GoogleChrome/lighthouse/pull/916 lands
 // const lighthouse = require('lighthouse/lighthouse-cli/bin.js').launchChromeAndRun;
 const lighthouse = require('./lighthouse-bin.js').launchChromeAndRun;
@@ -22,7 +23,9 @@ const exec = require('child_process').exec;
 let configPath = 'lighthouse/lighthouse-core/config/default.json';
 
 const defaultOptions = {
-    url: '',
+    serverHostname: '127.0.0.1',
+    serverPort: 8888,
+    dist: path.join(__dirname, '../../../', 'dist'),
     perf: false,
     disableDeviceEmulation: false,
     disableCPUThrottling: true,
@@ -71,13 +74,22 @@ class WebpackLighthousePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('after-emit', () => {
-      if (this.options.url.length) {
-        const flags = {
-          lighthouseFlags: this.options
-        };
-        lighthouse([this.options.url], require(configPath), flags);
-      }
+    compiler.plugin('done', () => {
+      const {
+        serverHostname,
+        serverPort,
+        dist
+      } = this.options
+      const app = express();
+      app.use(express.static(dist));
+      const server = app.listen(serverPort, serverHostname, () => {
+        lighthouse([`http://${serverHostname}:${serverPort}`], require(configPath), { lighthouseFlags: this.options })
+          .then(() => {
+            console.log('Report finished')
+            server.close()
+            process.exit()
+          })
+      })
     });
   }
 }
