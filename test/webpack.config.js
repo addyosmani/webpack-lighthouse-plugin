@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+const path = require('path')
 const webpack = require('webpack');
 const WebpackLighthousePlugin = require('../src/webpack-lighthouse-plugin');
 
 module.exports = {
-    entry: 'sample.js',
+    entry: './sample.js',
     output: {
         filename: 'test.js'
     },
     plugins: [
         new WebpackLighthousePlugin({
-            url: 'https://airhorner.com',
+            serverHostname: 'localhost',
+            serverPort: 8080,
+            dist: path.resolve(__dirname, './'),
             saveAssets: true,
             perf: true
         })

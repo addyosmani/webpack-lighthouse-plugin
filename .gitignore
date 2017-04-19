@@ -1,5 +1,3 @@
-test/*.html
-test/*.json
-test/*.log
+test/test.js
 node_modules
 npm-debug.log
