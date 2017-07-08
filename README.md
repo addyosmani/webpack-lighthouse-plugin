@@ -17,10 +17,9 @@ const WebpackLighthousePlugin = require('webpack-lighthouse-plugin');
 
 module.exports = {
   ...
-  ...
   plugins: [
     new WebpackLighthousePlugin({
-        url: 'http://localhost:9001'
+      url: 'http://localhost:9001'
     })
   ],
   ...
