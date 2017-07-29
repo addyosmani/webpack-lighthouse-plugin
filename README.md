@@ -17,10 +17,9 @@ const WebpackLighthousePlugin = require('webpack-lighthouse-plugin');
 
 module.exports = {
   ...
-  ...
   plugins: [
     new WebpackLighthousePlugin({
-        url: 'http://localhost:9001'
+      url: 'http://localhost:9001'
     })
   ],
   ...
@@ -35,15 +34,15 @@ Insert into your webpack.config.js:
 const WebpackLighthousePlugin = require('webpack-lighthouse-plugin');
 
 module.exports = {
-    entry: 'sample.js',
-    output: {
-        filename: 'test.js'
-    },
-	plugins: [
-		new WebpackLighthousePlugin({
-            url: 'https://airhorner.com'
-        })
-	],
+  entry: 'sample.js',
+  output: {
+    filename: 'test.js'
+  },
+  plugins: [
+    new WebpackLighthousePlugin({
+      url: 'https://airhorner.com'
+    })
+  ],
 };
 ```
 
@@ -64,34 +63,34 @@ module.exports = {
 Just get the time to first meaningful paint, time-to-interactive and perceptual speed-index:
 
 ```js
-	plugins: [
-		new WebpackLighthousePlugin({
-            url: 'https://airhorner.com',
-            perf: true
-        })
-	],
+plugins: [
+  new WebpackLighthousePlugin({
+    url: 'https://airhorner.com',
+    perf: true
+  })
+],
 ```
 
 ### Test with CPU, network throttling and device emulation
 
 ```js
-	plugins: [
-		new WebpackLighthousePlugin({
-            url: 'https://airhorner.com',
-            disableCPUThrottling: false
-        })
-	],
+plugins: [
+  new WebpackLighthousePlugin({
+    url: 'https://airhorner.com',
+    disableCPUThrottling: false
+  })
+],
 ```
 
 #### Save build assets (screenshots, trace and report):
 
 ```js
-	plugins: [
-		new WebpackLighthousePlugin({
-            url: 'https://airhorner.com',
-            saveAssets: true
-        })
-	],
+plugins: [
+  new WebpackLighthousePlugin({
+    url: 'https://airhorner.com',
+    saveAssets: true
+    })
+],
 ```
 
 If you require even more data, you can also pass `saveArtifacts: true`.
@@ -113,14 +112,14 @@ You can then run `webpack` against your build and instead of firing up a Chrome 
 your mobile device Chrome instead. You will want to disable a few flags to improve the accuracy of your metrics:
 
 ```js
-	plugins: [
-		new WebpackLighthousePlugin({
-            url: 'https://localhost:9000', // Port you are locally serving on
-            disableDeviceEmulation: true,
-            disableCPUThrottling: true,
-            disableNetworkThrottling: true // Only if you're going to use real 3G
-        })
-	],
+plugins: [
+  new WebpackLighthousePlugin({
+    url: 'https://localhost:9000', // Port you are locally serving on
+    disableDeviceEmulation: true,
+    disableCPUThrottling: true,
+    disableNetworkThrottling: true // Only if you're going to use real 3G
+  })
+],
 ```
 
 ### Webpack Dev Server
@@ -139,11 +138,11 @@ $ webpack-dev-server build/
 Then make sure to reference the `webpack-dev-server` URL in your `WebpackLighthousePlugin` config:
 
  ```js
-   plugins: [
-    new WebpackLighthousePlugin({
-      url: 'http://localhost:8080/webpack-dev-server/'
-    })
-  ]
+plugins: [
+  new WebpackLighthousePlugin({
+    url: 'http://localhost:8080/webpack-dev-server/'
+  })
+],
  ```
 
 ### Developing
