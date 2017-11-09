@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-// TODO: Switch when https://github.com/GoogleChrome/lighthouse/pull/916 lands
-// const lighthouse = require('lighthouse/lighthouse-cli/bin.js').launchChromeAndRun;
-const lighthouse = require('./lighthouse-bin.js').launchChromeAndRun;
-const exec = require('child_process').exec;
-let configPath = 'lighthouse/lighthouse-core/config/default.json';
+const lighthouse = require('./lighthouse-bin.js').run;
+let configPath;
 
 const defaultOptions = {
     url: '',
@@ -71,13 +68,18 @@ class WebpackLighthousePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('after-emit', () => {
+    compiler.plugin('after-emit', (compilation, callback) => {
       if (this.options.url.length) {
         const flags = {
           lighthouseFlags: this.options
         };
-        lighthouse([this.options.url], require(configPath), flags);
+        if(configPath) {
+           lighthouse([this.options.url], require(configPath), flags);
+        } else {
+           lighthouse([this.options.url], configPath, flags);
+        }
       }
+      callback();
     });
   }
 }

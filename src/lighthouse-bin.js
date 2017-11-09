@@ -18,134 +18,69 @@
 const _SIGINT = 'SIGINT';
 const _ERROR_EXIT_CODE = 130;
 const _RUNTIME_ERROR_CODE = 1;
-;
-const environment = require('lighthouse/lighthouse-core/lib/environment.js');
-if (!environment.checkNodeCompatibility()) {
-    console.warn('Compatibility error', 'Lighthouse requires node 5+ or 4 with --harmony');
-    process.exit(_RUNTIME_ERROR_CODE);
-}
+
 const path = require('path');
-const yargs = require('yargs');
 const Printer = require('lighthouse/lighthouse-cli/printer');
-const lighthouse = require('lighthouse/lighthouse-core');
 const assetSaver = require('lighthouse/lighthouse-core/lib/asset-saver.js');
-const log = require('lighthouse/lighthouse-core/lib/log');
-const chrome_launcher_1 = require('lighthouse/lighthouse-cli/chrome-launcher');
-const Commands = require('lighthouse/lighthouse-cli//commands/commands');
-const perfOnlyConfig = require('lighthouse/lighthouse-core/config/perf.json');
-// const cli = yargs
-//     .help('help')
-//     .version(() => require('lighthouse/package').version)
-//     .showHelpOnFail(false, 'Specify --help for available options')
-//     .usage('$0 url')
-//     .group([
-//     'verbose',
-//     'quiet'
-// ], 'Logging:')
-//     .describe({
-//     verbose: 'Displays verbose logging',
-//     quiet: 'Displays no progress, debug logs or errors'
-// })
-//     .group([
-//     'mobile',
-//     'save-assets',
-//     'save-artifacts',
-//     'list-all-audits',
-//     'list-trace-categories',
-//     'config-path',
-//     'perf'
-// ], 'Configuration:')
-//     .describe({
-//     'disable-device-emulation': 'Disable Nexus 5X emulation',
-//     'disable-cpu-throttling': 'Disable CPU throttling',
-//     'disable-network-throttling': 'Disable network throttling',
-//     'save-assets': 'Save the trace contents & screenshots to disk',
-//     'save-artifacts': 'Save all gathered artifacts to disk',
-//     'list-all-audits': 'Prints a list of all available audits and exits',
-//     'list-trace-categories': 'Prints a list of all required trace categories and exits',
-//     'config-path': 'The path to the config JSON.',
-//     'perf': 'Use a performance-test-only configuration',
-//     'skip-autolaunch': 'Skip autolaunch of Chrome when accessing port 9222 fails',
-//     'select-chrome': 'Interactively choose version of Chrome to use when multiple installations are found',
-// })
-//     .group([
-//     'output',
-//     'output-path'
-// ], 'Output:')
-//     .describe({
-//     'output': 'Reporter for the results',
-//     'output-path': `The file path to output the results
-// Example: --output-path=./lighthouse-results.html`
-// })
-//     .boolean([
-//     'disable-device-emulation',
-//     'disable-cpu-throttling',
-//     'disable-network-throttling',
-//     'save-assets',
-//     'save-artifacts',
-//     'list-all-audits',
-//     'list-trace-categories',
-//     'perf',
-//     'skip-autolaunch',
-//     'select-chrome',
-//     'verbose',
-//     'quiet',
-//     'help'
-// ])
-//     .choices('output', Printer.GetValidOutputOptions())
-//     .default('disable-cpu-throttling', true)
-//     .default('output', Printer.GetValidOutputOptions()[Printer.OutputMode.pretty])
-//     .default('output-path', 'stdout')
-//     .check((argv) => {
-//     // Make sure lighthouse has been passed a url, or at least one of --list-all-audits
-//     // or --list-trace-categories. If not, stop the program and ask for a url
-//     if (!argv.listAllAudits && !argv.listTraceCategories && argv._.length === 0) {
-//         throw new Error('Please provide a url');
-//     }
-//     return true;
-// })
-//     .argv;
+const getFilenamePrefix = require('lighthouse/lighthouse-core/lib/file-namer').getFilenamePrefix;
+const lighthouse = require('lighthouse');
+const log = require('lighthouse-logger');
+const chromeLauncher = require('lighthouse/chrome-launcher/chrome-launcher');
 
-const cli = {};
+function saveResults(results, artifacts, flags) {
+    let promise = Promise.resolve(results);
+    const cwd = process.cwd();
+    // Use the output path as the prefix for all generated files.
+    // If no output path is set, generate a file prefix using the URL and date.
+    const configuredPath = !flags.outputPath || flags.outputPath === 'stdout' ?
+        getFilenamePrefix(results) :
+        flags.outputPath.replace(/\.\w{2,4}$/, '');
+    const resolvedPath = path.resolve(cwd, configuredPath);
+  
+    if (flags.saveArtifacts) {
+      assetSaver.saveArtifacts(artifacts, resolvedPath);
+    }
+  
+    if (flags.saveAssets) {
+      promise = promise.then(_ => assetSaver.saveAssets(artifacts, results.audits, resolvedPath));
+    }
+  
+    const typeToExtension = (type) => type === 'domhtml' ? 'html' : type;
+    return promise.then(_ => {
+      if (Array.isArray(flags.output)) {
+        return flags.output.reduce((innerPromise, outputType) => {
+          const outputPath = `${resolvedPath}.report.${typeToExtension(outputType)}`;
+          return innerPromise.then((_) => Printer.write(results, outputType, outputPath));
+        }, Promise.resolve(results));
+      } else {
+        const outputPath =
+            flags.outputPath || `${resolvedPath}.report.${typeToExtension(flags.output)}`;
+        return Printer.write(results, flags.output, outputPath).then(results => {
+          if (flags.output === Printer.OutputMode[Printer.OutputMode.html] ||
+              flags.output === Printer.OutputMode[Printer.OutputMode.domhtml]) {
+            if (flags.view) {
+              opn(outputPath, {wait: false});
+            } else {
+              log.log(
+                  'CLI',
+                  'Protip: Run lighthouse with `--view` to immediately open the HTML report in your browser');
+            }
+          }
+  
+          return results;
+        });
+      }
+    });
+  }
 
-// Process terminating command
-if (cli.listAllAudits) {
-    Commands.ListAudits();
-}
-// Process terminating command
-if (cli.listTraceCategories) {
-    Commands.ListTraceCategories();
-}
-const urls = cli._;
-const outputMode = cli.output;
-const outputPath = cli['output-path'];
-const flags = cli;
-let config = null;
-if (cli.configPath) {
-    // Resolve the config file path relative to where cli was called.
-    cli.configPath = path.resolve(process.cwd(), cli.configPath);
-    config = require(cli.configPath);
-}
-else if (cli.perf) {
-    config = perfOnlyConfig;
-}
-// set logging preferences
-flags.logLevel = 'info';
-if (cli.verbose) {
-    flags.logLevel = 'verbose';
-}
-else if (cli.quiet) {
-    flags.logLevel = 'silent';
-}
-log.setLevel(flags.logLevel);
 const cleanup = {
     fns: [],
     register(fn) { this.fns.push(fn); },
     doCleanup() { return Promise.all(this.fns.map((c) => c())); }
 };
 function launchChromeAndRun(addresses, config, opts) {
-    opts = opts || cli;
-    const launcher = new chrome_launcher_1.ChromeLauncher({
+    opts = opts || {};
+    const launcher = new chromeLauncher.Launcher({
         autoSelectChrome: !opts.selectChrome,
     });
     cleanup.register(() => launcher.kill());
@@ -153,29 +88,33 @@ function launchChromeAndRun(addresses, config, opts) {
         .isDebuggerReady()
         .catch(() => {
         log.log('Lighthouse CLI', 'Launching Chrome...');
-        return launcher.run();
-    })
-        .then(() => lighthouseRun(addresses, config, opts.lighthouseFlags))
-        .then(() => launcher.kill());
+        return chromeLauncher.launch().then(chrome => chrome)
+        })
+        .then((chrome) => lighthouseRun(addresses, config, opts.lighthouseFlags, chrome))
+        .then((chrome) => chrome.kill())
+        .then(_ => Promise.resolve());
 }
 exports.launchChromeAndRun = launchChromeAndRun;
-function lighthouseRun(addresses, config, lighthouseFlags) {
+function lighthouseRun(addresses, config, lighthouseFlags, chrome) {
     // Enable a programatic consumer to pass custom flags otherwise default to CLI.
     lighthouseFlags = lighthouseFlags || flags;
+    lighthouseFlags.logLevel = lighthouseFlags.logLevel || 'info';
+    lighthouseFlags.output = lighthouseFlags.output || 'html';
+    log.setLevel(lighthouseFlags.logLevel);
+    lighthouseFlags.port = chrome.port;
     // Process URLs once at a time
     const address = addresses.shift();
     if (!address) {
-        return;
+        return chrome;
     }
-    return lighthouse(address, lighthouseFlags, config)
-        .then((results) => Printer.write(results, outputMode, outputPath))
-        .then((results) => {
-        if (outputMode === Printer.OutputMode[Printer.OutputMode.pretty]) {
-            const filename = `./${assetSaver.getFilenamePrefix({ url: address })}.report.html`;
-            Printer.write(results, 'html', filename);
-        }
-        return lighthouseRun(addresses, config, lighthouseFlags);
-    });
+    return lighthouse(address, lighthouseFlags)
+    .then((results) => {
+        return saveResults(results, results.artifacts, lighthouseFlags);
+    })
+    .then((results) => {
+        return lighthouseRun(addresses, config, lighthouseFlags, chrome);
+    }).then(result => result);
+
 }
 function showConnectionError() {
     console.error('Unable to connect to Chrome');
@@ -198,17 +137,17 @@ function handleError(err) {
         showRuntimeError(err);
     }
 }
-function run(lighthouseFlags) {
-    if (cli.skipAutolaunch) {
-        lighthouseRun(urls, config, lighthouseFlags).catch(handleError);
+function run(addresses, config, lighthouseFlags) {
+    if (lighthouseFlags.skipAutolaunch) {
+        return lighthouseRun(addresses, config, lighthouseFlags).catch(handleError);
     }
     else {
         // because you can't cancel a promise yet
         const isSigint = new Promise((resolve, reject) => {
             process.on(_SIGINT, () => reject(_SIGINT));
         });
-        Promise
-            .race([launchChromeAndRun(urls, config, {
+        return Promise
+            .race([launchChromeAndRun(addresses, config, {
                 lighthouseFlags: lighthouseFlags
             }), isSigint])
             .catch(maybeSigint => {

@@ -35,6 +35,7 @@
     "eslint-config-google": "^0.4.0"
   },
   "dependencies": {
-    "lighthouse": "^1.1.7"
+    "lighthouse": "^2.5.0",
+    "lighthouse-logger": "^1.0.1"
   }
 }
