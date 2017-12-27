@@ -1,6 +1,6 @@
 {
   "name": "webpack-lighthouse-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Lighthouse plugin for Webpack",
   "main": "src/webpack-lighthouse-plugin.js",
   "scripts": {
