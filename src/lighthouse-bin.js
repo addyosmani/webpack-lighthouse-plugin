@@ -109,7 +109,9 @@ function lighthouseRun(addresses, config, lighthouseFlags, chrome) {
     }
     return lighthouse(address, lighthouseFlags)
     .then((results) => {
-        return saveResults(results, results.artifacts, lighthouseFlags);
+        const artifacts = results.artifacts;
+        delete results.artifacts;
+        return saveResults(results, artifacts, lighthouseFlags);
     })
     .then((results) => {
         return lighthouseRun(addresses, config, lighthouseFlags, chrome);
