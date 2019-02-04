@@ -48,7 +48,7 @@ function validateInput(options) {
     options.perf = String(options.perf);
   }
   if (options.perf === true) {
-    configPath = 'lighthouse/lighthouse-core/config/perf.json';
+    configPath = 'lighthouse/lighthouse-core/config/perf-config.js';
   }
   return options;
 }
@@ -68,7 +68,7 @@ class WebpackLighthousePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('after-emit', (compilation, callback) => {
+    compiler.hooks.afterEmit.tapAsync('lighthousePlugin', (compilation, callback) => {
       if (this.options.url.length) {
         const flags = {
           lighthouseFlags: this.options

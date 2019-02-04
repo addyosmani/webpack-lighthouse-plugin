@@ -25,24 +25,24 @@ const assetSaver = require('lighthouse/lighthouse-core/lib/asset-saver.js');
 const getFilenamePrefix = require('lighthouse/lighthouse-core/lib/file-namer').getFilenamePrefix;
 const lighthouse = require('lighthouse');
 const log = require('lighthouse-logger');
-const chromeLauncher = require('lighthouse/chrome-launcher/chrome-launcher');
+const chromeLauncher = require('chrome-launcher');
 
 function saveResults(results, artifacts, flags) {
     let promise = Promise.resolve(results);
     const cwd = process.cwd();
     // Use the output path as the prefix for all generated files.
     // If no output path is set, generate a file prefix using the URL and date.
+
     const configuredPath = !flags.outputPath || flags.outputPath === 'stdout' ?
-        getFilenamePrefix(results) :
+        getFilenamePrefix(results.lhr) :
         flags.outputPath.replace(/\.\w{2,4}$/, '');
     const resolvedPath = path.resolve(cwd, configuredPath);
-  
     if (flags.saveArtifacts) {
       assetSaver.saveArtifacts(artifacts, resolvedPath);
     }
   
     if (flags.saveAssets) {
-      promise = promise.then(_ => assetSaver.saveAssets(artifacts, results.audits, resolvedPath));
+      promise = promise.then(_ => assetSaver.saveAssets(results.artifacts, results.audits, resolvedPath));
     }
   
     const typeToExtension = (type) => type === 'domhtml' ? 'html' : type;
@@ -55,7 +55,7 @@ function saveResults(results, artifacts, flags) {
       } else {
         const outputPath =
             flags.outputPath || `${resolvedPath}.report.${typeToExtension(flags.output)}`;
-        return Printer.write(results, flags.output, outputPath).then(results => {
+        return Printer.write(results.report, flags.output, outputPath).then(results => {
           if (flags.output === Printer.OutputMode[Printer.OutputMode.html] ||
               flags.output === Printer.OutputMode[Printer.OutputMode.domhtml]) {
             if (flags.view) {

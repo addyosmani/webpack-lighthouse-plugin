@@ -19,7 +19,7 @@ const webpack = require('webpack');
 const WebpackLighthousePlugin = require('../src/webpack-lighthouse-plugin');
 
 module.exports = {
-    entry: 'sample.js',
+    entry: './sample.js',
     output: {
         filename: 'test.js'
     },

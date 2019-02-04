@@ -1,10 +1,10 @@
 {
   "name": "webpack-lighthouse-plugin",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Lighthouse plugin for Webpack",
   "main": "src/webpack-lighthouse-plugin.js",
   "scripts": {
-    "demo": "cd test && webpack .",
+    "demo": "cd test && webpack",
     "lint": "eslint src/webpack-shell-plugin.js",
     "clean": "rm -rf test/*.json test/*.html test/*.log"
   },
@@ -30,12 +30,13 @@
   },
   "homepage": "https://github.com/addyosmani/webpack-lighthouse-plugin#readme",
   "devDependencies": {
-    "webpack": "^1.13.3",
     "eslint": "^2.7.0",
-    "eslint-config-google": "^0.4.0"
+    "eslint-config-google": "^0.4.0",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.2.1"
   },
   "dependencies": {
-    "lighthouse": "^2.5.0",
+    "lighthouse": "^4.1.0",
     "lighthouse-logger": "^1.0.1"
   }
 }
