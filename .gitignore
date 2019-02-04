@@ -3,3 +3,4 @@ test/*.json
 test/*.log
 node_modules
 npm-debug.log
+.DS_Store
