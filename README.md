@@ -127,7 +127,7 @@ plugins: [
 *Note: Webpack Dev Server targets development builds rather than production. Although
 you can run Lighthouse against a dev build, it's best run against builds closer to prod.*
 
-If you're trying to use [webpack-dev-server](https://webpack.github.io/docs/webpack-dev-server.html) with
+If you're trying to use [webpack-dev-server](https://webpack.js.org/configuration/dev-server/) with
 this plugin, first run it against your local build using the `webpack-dev-server` CLI:
 
 ```js
