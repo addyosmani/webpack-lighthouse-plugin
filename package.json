@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "lighthouse": "^7.3.0",
-    "lighthouse-logger": "^1.2.0",
-    "webpack-cli-monorepo": "file:../webpack-cli"
+    "lighthouse-logger": "^1.2.0"
   }
 }
