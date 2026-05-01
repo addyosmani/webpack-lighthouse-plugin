@@ -1,12 +1,12 @@
+[![npm version](https://badge.fury.io/js/webpack-lighthouse-plugin.svg)](https://badge.fury.io/js/webpack-lighthouse-plugin)
+[![npm](https://img.shields.io/npm/dm/webpack-lighthouse-plugin.svg)]()
+# Webpack Lighthouse Plugin
+
 > :warning: **DEPRECATED**
 >
 > This project is no longer maintained. It will not receive any updates, including security fixes.
 >
 > **Please use Lighthouse directly instead.**
-
-[![npm version](https://badge.fury.io/js/webpack-lighthouse-plugin.svg)](https://badge.fury.io/js/webpack-lighthouse-plugin)
-[![npm](https://img.shields.io/npm/dm/webpack-lighthouse-plugin.svg)]()
-# Webpack Lighthouse Plugin
 
 This plugin allows you to run [Lighthouse](https://github.com/googlechrome/lighthouse) from a Webpack build.
 
